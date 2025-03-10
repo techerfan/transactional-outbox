@@ -10,7 +10,8 @@ type Repository interface {
 	GetFirstOrderFromOutbox(ctx context.Context) (entity.OrderOutbox, error)
 	UpdateOrderOutbox(ctx context.Context, orderOutbox entity.OrderOutbox) error
 	CreateOrder(ctx context.Context, orderEntity entity.Order) (entity.Order, entity.OrderOutbox, error)
-	CreateOrderOutbox(context.Context, entity.OrderOutbox) (entity.OrderOutbox, error)
+	FindOrderByID(ctx context.Context, id uint) (entity.Order, error)
+	FindOrderOutboxByID(ctx context.Context, id uint) (entity.OrderOutbox, error)
 	DeleteOrderOutbox(context.Context, uint) error
 }
 

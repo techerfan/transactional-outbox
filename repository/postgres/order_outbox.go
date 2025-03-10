@@ -24,3 +24,11 @@ func (p *PostgresDB) GetFirstOrderFromOutbox(ctx context.Context) (entity.OrderO
 
 	return orderOutbox, nil
 }
+
+func (p *PostgresDB) FindOrderOutboxByID(ctx context.Context, id uint) (entity.OrderOutbox, error) {
+	var orderOutbox entity.OrderOutbox
+	if err := p.db.WithContext(ctx).Where("id = ?", id).First(&orderOutbox).Error; err != nil {
+		return entity.OrderOutbox{}, err
+	}
+	return orderOutbox, nil
+}

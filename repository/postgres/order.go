@@ -31,3 +31,11 @@ func (p *PostgresDB) CreateOrder(ctx context.Context, orderEntity entity.Order) 
 
 	return mapOrderToOrderEntity(order), orderOutbox, nil
 }
+
+func (p *PostgresDB) FindOrderByID(ctx context.Context, id uint) (entity.Order, error) {
+	var order entity.Order
+	if err := p.db.WithContext(ctx).Where("id = ?", id).First(&order).Error; err != nil {
+		return entity.Order{}, err
+	}
+	return order, nil
+}
