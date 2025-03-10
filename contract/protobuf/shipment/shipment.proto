@@ -7,7 +7,8 @@ option go_package = "contract/goproto/shipment";
 message Shipment {
     uint32 id = 1;
     uint32 order_id = 2;
-    string idempotency_key = 3;
+    uint32 order_outbox_id = 3;
+    string idempotency_key = 4;
 }
 
 message CommitShipmentRequest {
