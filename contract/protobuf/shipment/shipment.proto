@@ -1,0 +1,23 @@
+syntax = "proto3";
+// cd contract/protobuf && protoc --go_out=../../contract/goproto/shipment --go_opt=paths=source_relative --go-grpc_out=../../contract/goproto/shipment --go-grpc_opt=paths=source_relative shipment/shipment.proto
+package shipment;
+
+option go_package = "contract/goproto/shipment";
+
+message Shipment {
+    uint32 id = 1;
+    uint32 order_id = 2;
+    string idempotency_key = 3;
+}
+
+message CommitShipmentRequest {
+    Shipment shipment = 1;
+}
+
+message CommitShipmentResponse {
+    string message = 1;
+}
+
+service ShipmentService {
+  rpc CommitShipment(CommitShipmentRequest) returns (CommitShipmentResponse) {}
+}
