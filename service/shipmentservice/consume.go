@@ -9,14 +9,14 @@ import (
 )
 
 func (s *Service) ConsumeOrderEvent(msg []byte) error {
-	var orderEvent entity.OrderEvent
+	var orderEvent entity.OrderOutbox
 	err := json.Unmarshal(msg, &orderEvent)
 	if err != nil {
 		return fmt.Errorf("could not unmarshal the msg: %v", err)
 	}
 
 	// check if the order is already committed
-	shipment, exist, err := s.repo.FindShipmentByOrderID(context.Background(), orderEvent.Order.ID)
+	shipment, exist, err := s.repo.FindShipmentByOrderID(context.Background(), orderEvent.OrderID)
 	if err != nil {
 		return fmt.Errorf("could not find the shipment: %v", err)
 	}
@@ -24,7 +24,7 @@ func (s *Service) ConsumeOrderEvent(msg []byte) error {
 	// Create a new shipment if it doesn't exist
 	if !exist {
 		shipment = entity.Shipment{
-			OrderID: orderEvent.Order.ID,
+			OrderID: orderEvent.OrderID,
 			Status:  entity.ShipmentStatusPending,
 		}
 
@@ -37,6 +37,7 @@ func (s *Service) ConsumeOrderEvent(msg []byte) error {
 	err = s.shipmentClient.CommitShipment(context.Background(), dto.CommitShipmentRequest{
 		ShipmentID:     shipment.ID,
 		OrderID:        shipment.OrderID,
+		OrderOutboxID:  orderEvent.ID,
 		IdempotencyKey: orderEvent.IdempotencyKey,
 	})
 	if err != nil {

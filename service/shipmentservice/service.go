@@ -12,17 +12,18 @@ type Repository interface {
 	FindShipmentByOrderID(ctx context.Context, orderID uint) (entity.Shipment, bool, error)
 }
 
-type shipmentClient interface {
+type ShipmentClient interface {
 	CommitShipment(ctx context.Context, req dto.CommitShipmentRequest) error
 }
 
 type Service struct {
 	repo           Repository
-	shipmentClient shipmentClient
+	shipmentClient ShipmentClient
 }
 
-func New(repo Repository) *Service {
+func New(repo Repository, client ShipmentClient) *Service {
 	return &Service{
-		repo: repo,
+		repo:           repo,
+		shipmentClient: client,
 	}
 }

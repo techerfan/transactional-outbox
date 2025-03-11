@@ -3,6 +3,7 @@ package rabbitmq
 import (
 	"context"
 	"fmt"
+	"log"
 	"order/contract/broker"
 	"order/entity"
 	"time"
@@ -81,10 +82,12 @@ func (a Adapter) Consume(event entity.Event, handler broker.MessageHandler) erro
 	}
 
 	for msg := range msgs {
+		time.Sleep(time.Second * 1)
 		err := handler(msg.Body)
 		if err != nil {
 			msg.Nack(false, true)
-			return fmt.Errorf("could not handle the msg: %v", err)
+			log.Printf("could not handle the msg: %v, msg: %s", err, msg.Body)
+			continue
 		}
 		msg.Ack(false)
 	}

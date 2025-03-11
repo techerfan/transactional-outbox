@@ -31,7 +31,10 @@ func main() {
 	orderService := orderservice.New(rabbitmqAdapter, db)
 
 	grpcServer := shipment.New(*orderService)
+	go func() {
+		grpcServer.Start(":8082")
+	}()
 
 	server := httpserver.New(orderService)
-	server.Start(":8080")
+	server.Start(":8081")
 }

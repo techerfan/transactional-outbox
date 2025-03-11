@@ -22,6 +22,13 @@ type (
 		IdempotencyKey string
 		Pushed         bool
 	}
+
+	Shipment struct {
+		gorm.Model
+
+		OrderID uint
+		Status  string
+	}
 )
 
 func mapOrderToOrderEntity(order Order) entity.Order {
@@ -61,5 +68,25 @@ func mapOrderOutboxEntityToOrderOutbox(orderOutbox entity.OrderOutbox) OrderOutb
 		OrderID:        orderOutbox.OrderID,
 		IdempotencyKey: orderOutbox.IdempotencyKey,
 		Pushed:         orderOutbox.Pushed,
+	}
+}
+
+func mapShipmentToShipmentEntity(shipment Shipment) entity.Shipment {
+	return entity.Shipment{
+		ID:        shipment.ID,
+		OrderID:   shipment.OrderID,
+		Status:    entity.ShipmentStatus(shipment.Status),
+		CreatedAt: shipment.CreatedAt,
+		UpdatedAt: shipment.UpdatedAt,
+	}
+}
+
+func mapShipmentEntityToShipment(shipment entity.Shipment) Shipment {
+	return Shipment{
+		Model: gorm.Model{
+			ID: shipment.ID,
+		},
+		OrderID: shipment.OrderID,
+		Status:  string(shipment.Status),
 	}
 }

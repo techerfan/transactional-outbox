@@ -31,6 +31,7 @@ func (c Client) CommitShipment(ctx context.Context, req dto.CommitShipmentReques
 		Shipment: &shipment.Shipment{
 			Id:             uint32(req.ShipmentID),
 			OrderId:        uint32(req.OrderID),
+			OrderOutboxId:  uint32(req.OrderOutboxID),
 			IdempotencyKey: req.IdempotencyKey,
 		},
 	})
