@@ -15,24 +15,7 @@ func (a Adapter) Publish(event entity.Event, payload string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*1)
 	defer cancel()
 
-	ch, err := a.conn.Channel()
-	if err != nil {
-		return err
-	}
-
-	_, err = ch.QueueDeclare(
-		string(event),
-		true,
-		false,
-		false,
-		false,
-		nil,
-	)
-	if err != nil {
-		return fmt.Errorf("could not declare the queue: %v", err)
-	}
-
-	err = ch.PublishWithContext(ctx,
+	err := a.ch.PublishWithContext(ctx,
 		"",
 		string(event),
 		true, // mandatory
@@ -51,24 +34,7 @@ func (a Adapter) Publish(event entity.Event, payload string) error {
 }
 
 func (a Adapter) Consume(event entity.Event, handler broker.MessageHandler) error {
-	ch, err := a.conn.Channel()
-	if err != nil {
-		return err
-	}
-
-	_, err = ch.QueueDeclare(
-		string(event),
-		true,
-		false,
-		false,
-		false,
-		nil,
-	)
-	if err != nil {
-		return fmt.Errorf("could not declare the queue: %v", err)
-	}
-
-	msgs, err := ch.Consume(
+	msgs, err := a.ch.Consume(
 		string(event),
 		"",
 		false,
@@ -82,7 +48,7 @@ func (a Adapter) Consume(event entity.Event, handler broker.MessageHandler) erro
 	}
 
 	for msg := range msgs {
-		time.Sleep(time.Second * 1)
+		time.Sleep(time.Millisecond * 10)
 		err := handler(msg.Body)
 		if err != nil {
 			msg.Nack(false, true)

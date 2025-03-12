@@ -15,14 +15,14 @@ func (p *PostgresDB) DeleteOrderOutbox(ctx context.Context, id uint) error {
 	return p.db.WithContext(ctx).Unscoped().Delete(&OrderOutbox{}, id).Error
 }
 
-func (p *PostgresDB) GetFirstOrderFromOutbox(ctx context.Context) (entity.OrderOutbox, error) {
-	var orderOutbox entity.OrderOutbox
+func (p *PostgresDB) GetOrdersFromOutbox(ctx context.Context, limit int) ([]entity.OrderOutbox, error) {
+	var orderOutboxes []entity.OrderOutbox
 
-	if err := p.db.WithContext(ctx).Where("pushed = ?", false).Order("id ASC").First(&orderOutbox).Error; err != nil {
-		return entity.OrderOutbox{}, err
+	if err := p.db.WithContext(ctx).Where("pushed = ?", false).Order("id ASC").Limit(limit).Find(&orderOutboxes).Error; err != nil {
+		return nil, err
 	}
 
-	return orderOutbox, nil
+	return orderOutboxes, nil
 }
 
 func (p *PostgresDB) FindOrderOutboxByID(ctx context.Context, id uint) (entity.OrderOutbox, error) {

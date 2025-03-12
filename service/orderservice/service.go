@@ -7,7 +7,7 @@ import (
 )
 
 type Repository interface {
-	GetFirstOrderFromOutbox(ctx context.Context) (entity.OrderOutbox, error)
+	GetOrdersFromOutbox(ctx context.Context, limit int) ([]entity.OrderOutbox, error)
 	UpdateOrderOutbox(ctx context.Context, orderOutbox entity.OrderOutbox) error
 	CreateOrder(ctx context.Context, orderEntity entity.Order) (entity.Order, entity.OrderOutbox, error)
 	FindOrderByID(ctx context.Context, id uint) (entity.Order, error)
@@ -16,13 +16,15 @@ type Repository interface {
 }
 
 type Service struct {
-	publisher broker.Publisher
-	repo      Repository
+	publisher  broker.Publisher
+	relayLimit int
+	repo       Repository
 }
 
-func New(publisher broker.Publisher, repo Repository) *Service {
+func New(publisher broker.Publisher, repo Repository, relayLimit int) *Service {
 	return &Service{
-		publisher: publisher,
-		repo:      repo,
+		publisher:  publisher,
+		relayLimit: relayLimit,
+		repo:       repo,
 	}
 }

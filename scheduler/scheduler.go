@@ -38,7 +38,7 @@ func (s Scheduler) Start(ctx context.Context, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	job, err := s.sch.NewJob(
-		gocron.DurationJob(time.Duration(s.config.SendOrdersToOutboxInterval)*time.Second),
+		gocron.DurationJob(time.Duration(s.config.SendOrdersToOutboxInterval)*time.Millisecond),
 		gocron.NewTask(s.PushOrdersToQueue),
 	)
 	if err != nil {

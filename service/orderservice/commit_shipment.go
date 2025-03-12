@@ -3,6 +3,7 @@ package orderservice
 import (
 	"context"
 	"errors"
+	"log"
 	"order/dto"
 )
 
@@ -15,7 +16,9 @@ func (s *Service) CommitShipment(ctx context.Context, req dto.CommitShipmentRequ
 
 	orderOutbox, err := s.repo.FindOrderOutboxByID(ctx, req.OrderOutboxID)
 	if err != nil {
-		return dto.CommitShipmentResponse{}, err
+		// TODO: log the error
+		log.Println(err)
+		return dto.CommitShipmentResponse{}, nil
 	}
 
 	if !orderOutbox.Pushed {

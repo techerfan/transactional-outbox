@@ -29,10 +29,10 @@ func main() {
 		DBName:   "postgres",
 	})
 
-	orderservice := orderservice.New(borker, repo)
+	orderservice := orderservice.New(borker, repo, 100)
 
 	scheduler := scheduler.New(scheduler.Config{
-		SendOrdersToOutboxInterval: 10,
+		SendOrdersToOutboxInterval: 1000,
 	}, *orderservice)
 
 	ctx := context.Background()

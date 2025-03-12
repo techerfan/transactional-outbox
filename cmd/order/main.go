@@ -28,7 +28,7 @@ func main() {
 		DBName:   "postgres",
 	})
 
-	orderService := orderservice.New(rabbitmqAdapter, db)
+	orderService := orderservice.New(rabbitmqAdapter, db, 100)
 
 	grpcServer := shipment.New(*orderService)
 	go func() {
